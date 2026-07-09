@@ -75,15 +75,19 @@ Blueprint, use Option B below.
 
 **Build Command (first deploy — uses db push since there's no migration history yet):**
 ```
-npm install && npx prisma generate && npx prisma db push && npm run build
+npm install --include=dev && npx prisma generate && npx prisma db push && npm run build
 ```
+Note the `--include=dev` — it's required because `NODE_ENV=production` is set
+as an env var, and npm normally skips devDependencies (where the `nest` CLI
+lives) when it sees that. Without this flag the build fails with
+`sh: 1: nest: not found`.
 
 **Once you've deployed successfully once**, switch to proper migrations for
 all future changes: run `npx prisma migrate dev --name init` on your own
 machine (with a local Postgres or the Render DB URL), commit the generated
 `prisma/migrations/` folder, then change the Render build command to:
 ```
-npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+npm install --include=dev && npx prisma generate && npx prisma migrate deploy && npm run build
 ```
 
 **Start Command:**
